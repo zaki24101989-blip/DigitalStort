@@ -9,6 +9,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     useFB = await window.firebaseReady;
   } catch(e) {}
 
+  // مزامنة مستخدم Firebase مع LocalStorage (باش checkAuth يشتغل)
+  function syncLocalUser(localUserObj) {
+    const users = SocialX.getUsers();
+    const idx = users.findIndex(u => u.id === localUserObj.id);
+    if (idx >= 0) {
+      users[idx] = { ...users[idx], ...localUserObj };
+    } else {
+      users.push(localUserObj);
+    }
+    SocialX.saveUsers(users);
+  }
+
   // ========== LOGIN ==========
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -26,6 +38,24 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Firebase Auth
           const email = usernameOrEmail.includes('@') ? usernameOrEmail : usernameOrEmail + '@socialx.app';
           const cred = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, password);
+
+          // جلب بيانات المستخدم من Firestore ومزامنتها محليًا
+          let profile = { username: email.split('@')[0], fullName: cred.user.displayName || '', email };
+          try {
+            const snap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', cred.user.uid));
+            if (snap.exists()) profile = snap.data();
+          } catch (e2) {}
+
+          syncLocalUser({
+            id: cred.user.uid,
+            username: profile.username || (profile.email ? profile.email.split('@')[0] : 'user'),
+            fullName: profile.fullName || '',
+            email: profile.email || email,
+            bio: profile.bio || '',
+            avatar: profile.avatar || ('https://i.pravatar.cc/150?u=' + encodeURIComponent(cred.user.uid)),
+            createdAt: Date.now()
+          });
+
           localStorage.setItem('sx_current_user', cred.user.uid);
           SocialX.showToast('مرحبًا بك!');
           setTimeout(() => location.href = 'index.html', 400);
@@ -87,7 +117,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           // Firebase
           const cred = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, password);
           await window.FB.updateProfile(cred.user, { displayName: fullName });
-          
+
+          const avatar = 'https://i.pravatar.cc/150?u=' + encodeURIComponent(username);
+
           // حفظ بيانات المستخدم في Firestore
           await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', cred.user.uid), {
             uid: cred.user.uid,
@@ -95,10 +127,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             fullName,
             email,
             bio: '',
-            avatar: 'https://i.pravatar.cc/150?u=' + encodeURIComponent(username),
+            avatar,
             createdAt: window.FB.serverTimestamp(),
             followers: [],
             following: []
+          });
+
+          // مزامنة محلية باش checkAuth يشتغل
+          syncLocalUser({
+            id: cred.user.uid,
+            username, fullName, email,
+            bio: '', avatar,
+            createdAt: Date.now()
           });
 
           localStorage.setItem('sx_current_user', cred.user.uid);
