@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>تسجيل الدخول - SocialX</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">SocialX</div>
+      <div class="auth-error" id="loginError"></div>
+      <form class="auth-form" id="loginForm">
+        <div class="form-group">
+          <input type="text" id="loginUsername" placeholder="البريد الإلكتروني أو اسم المستخدم" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <input type="password" id="loginPassword" placeholder="كلمة المرور" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-primary" id="loginBtn">تسجيل الدخول</button>
+      </form>
+      <div class="auth-divider">أو</div>
+      <p style="text-align:center;font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px">
+        حساب تجريبي: <strong>ahmed_dev</strong> / <strong>123456</strong>
+      </p>
+      <div class="auth-footer">
+        ليس لديك حساب؟ <a href="register.html">إنشاء حساب</a>
+      </div>
+    </div>
+  </div>
+  <script src="firebase.js"></script>
+  <script src="script.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

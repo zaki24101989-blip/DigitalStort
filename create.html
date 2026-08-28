@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>إنشاء منشور - SocialX</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div class="create-page">
+    <div class="create-header">
+      <button class="create-cancel" onclick="location.href='index.html'">إلغاء</button>
+      <h1>منشور جديد</h1>
+      <button class="create-share" id="shareBtn" disabled>مشاركة</button>
+    </div>
+    <div class="create-preview" id="preview" onclick="document.getElementById('fileInput').click()">
+      <div class="placeholder" id="placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <p>اضغط لاختيار صورة</p>
+      </div>
+      <img id="previewImg" style="display:none" alt="">
+    </div>
+    <input type="file" id="fileInput" class="file-input-hidden" accept="image/*">
+    <div class="create-form">
+      <textarea class="create-caption" id="caption" placeholder="اكتب وصفًا... استخدم # للهاشتاج" rows="4"></textarea>
+      <div class="create-options">
+        <div class="create-option">
+          <span>إضافة هاشتاجات</span>
+          <span style="color:var(--text-secondary);font-size:0.85rem" id="hashtagPreview"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script src="create.js"></script>
+</body>
+</html>
