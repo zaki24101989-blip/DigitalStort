@@ -1,9 +1,39 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const currentUser = SocialX.getCurrentUser();
   if (!currentUser) return;
   const input = document.getElementById('searchInput');
   const results = document.getElementById('searchResults');
   const suggested = document.getElementById('suggestedUsers');
+
+  // انتظار Firebase
+  let useFB = false;
+  try { useFB = await window.firebaseReady; } catch (e) {}
+
+  // جلب كل المستخدمين من Firestore ودمجهم مع القائمة المحلية
+  let allUsers = SocialX.getUsers();
+
+  if (useFB && window.FB) {
+    try {
+      const snap = await window.FB.getDocs(window.FB.collection(window.FB.db, 'users'));
+      const fbUsers = [];
+      snap.forEach(docSnap => {
+        const d = docSnap.data();
+        fbUsers.push({
+          id: docSnap.id,
+          username: d.username || '',
+          fullName: d.fullName || '',
+          email: d.email || '',
+          bio: d.bio || '',
+          avatar: d.avatar || ('https://i.pravatar.cc/150?u=' + encodeURIComponent(docSnap.id))
+        });
+      });
+      // دمج: أولوية للبيانات من Firestore، بلا تكرار
+      const localOnly = allUsers.filter(lu => !fbUsers.some(fu => fu.id === lu.id));
+      allUsers = [...fbUsers, ...localOnly];
+    } catch (e) {
+      console.warn('تعذر جلب المستخدمين من Firestore', e);
+    }
+  }
 
   function renderUsers(users) {
     return users.map(u => `
@@ -17,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Suggested
-  const others = SocialX.getUsers().filter(u => u.id !== currentUser.id);
+  const others = allUsers.filter(u => u.id !== currentUser.id);
   suggested.innerHTML = renderUsers(others);
 
   input.addEventListener('input', () => {
@@ -26,8 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       results.innerHTML = `<div class="search-section-title">مستخدمون مقترحون</div><div id="suggestedUsers">${renderUsers(others)}</div>`;
       return;
     }
-    const matchedUsers = SocialX.getUsers().filter(u =>
-      u.username.toLowerCase().includes(q) || u.fullName.toLowerCase().includes(q)
+    const matchedUsers = allUsers.filter(u =>
+      (u.username || '').toLowerCase().includes(q) || (u.fullName || '').toLowerCase().includes(q)
     );
     const matchedPosts = SocialX.getPosts().filter(p =>
       (p.caption || '').toLowerCase().includes(q) || (p.hashtags || []).some(h => h.toLowerCase().includes(q))
@@ -55,3 +85,4 @@ document.addEventListener('DOMContentLoaded', () => {
     results.innerHTML = html;
   });
 });
+      
