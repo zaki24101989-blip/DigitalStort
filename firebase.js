@@ -1,33 +1,19 @@
 /* ============================================
    SocialX - Firebase Full Integration
-   ============================================
-   
-   الخطوات:
-   1. اذهب إلى https://console.firebase.google.com
-   2. اضغط "إضافة مشروع" → اختر اسم (مثل SocialX)
-   3. عطّل Google Analytics إن أردت
-   4. بعد إنشاء المشروع:
-      - من القائمة اليسرى: Build → Authentication → Get started
-        → Sign-in method → Email/Password → Enable → Save
-      - Build → Firestore Database → Create database → Start in test mode
-      - Build → Storage → Get started → Start in test mode
-   5. اضغط ⚙️ Project settings → Your apps → Web (</>) 
-      → Register app → انسخ الـ firebaseConfig
-   6. ضع القيم الحقيقية مكان YOUR_... أدناه
-   7. غيّر USE_FIREBASE إلى true
-*/
+   ============================================ */
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyChOL61gLfbX6re7FTGJj83exz6_3-NH-I",
+  authDomain: "socialx-3c75e.firebaseapp.com",
+  projectId: "socialx-3c75e",
+  storageBucket: "socialx-3c75e.firebasestorage.app",
+  messagingSenderId: "158160318590",
+  appId: "1:158160318590:web:ff5f61408a9a4c9e38e82f",
+  measurementId: "G-RWXJDZ1DWB"
 };
 
-// ← غيّر هذا إلى true بعد وضع الإعدادات الصحيحة
-const USE_FIREBASE = false;
+// ← تم التفعيل
+const USE_FIREBASE = true;
 
 let fbApp = null;
 let fbAuth = null;
